@@ -1,6 +1,12 @@
 Here's a line 
  
+<<<<<<< HEAD
 Hello GitHub! 
  
 Here's another line
 
+=======
+Hello World! 
+ 
+Here's another line
+>>>>>>> a74daf98767431610aa4328f27a9f425c58804f9
