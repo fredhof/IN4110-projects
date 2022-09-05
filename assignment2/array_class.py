@@ -11,12 +11,8 @@ class Array:
         - float
         - bool
 
-        Make sure the values and shape are of the correct type.
-
-        Make sure that you check that your array actually is an array, which means it is homogeneous (one data type).
-
         Args:
-            shape (tuple): shape of the array as a tuple. A 1D array with n elements will have shape = (n,).
+            shape (tuple): shape of the array as a tuple. A 1D array with n elements will have shape = (n,)..
             *values: The values in the array. These should all be the same data type. Either int, float or boolean.
 
         Raises:
@@ -24,14 +20,24 @@ class Array:
             ValueError: If the values are not all of the same type.
             ValueError: If the number of values does not fit with the shape.
         """
+        # This allowes us to input lists aswell, so that Array(shape, [1,2,3]) == Array(shape, 1,2,3)
+        if len(values) == 1 and isinstance(values,tuple):
+            values = values[0]
 
-        # Check if the values are of valid types
+        if not isinstance(shape, tuple) or not all(isinstance(x, (int, float, bool)) for x in values):
+            raise TypeError(f"Ensure that the shape is of type {tuple} and/or that the values are of a valid type.")
+       
+        if not all(isinstance(x, type(values[0])) for x in values[1:]):
+            raise ValueError("The values of are not all of the same type.")
 
-        # Check that the amount of values corresponds to the shape
+        from math import prod # import product summation from Pythons math library
+        if prod(shape) != len(values):
+            raise ValueError(f"The number of values: {len(values)}, do not fit the shape of the array: {shape}.")
 
-        # Set class-variables
 
-        pass
+        self.shape = shape
+        self.array = [*values]
+
 
     def __str__(self):
         """Returns a nicely printable string representation of the array.
@@ -40,7 +46,7 @@ class Array:
             str: A string representation of the array.
 
         """
-        pass
+        return str(self.array)
 
     def __add__(self, other):
         """Element-wise adds Array with another Array or number.
@@ -57,9 +63,16 @@ class Array:
         """
 
         # check that the method supports the given arguments (check for data type and shape of array)
-        # if the array is a boolean you should return NotImplemented
+        if isinstance(other,(int,float)):
+            return Array(self.shape, [self.array[i] + other for i in range(len(self.array))])
 
-        pass
+
+        assert len(self.array) == len(other), "Arrays do not have the same dimensions."
+        
+        if isinstance(self.array,bool) or isinstance(other,bool):
+            return NotImplemented
+
+        return Array(self.shape, [self.array[i] + other.array[i] for i in range(len(self.array))])
 
     def __radd__(self, other):
         """Element-wise adds Array with another Array or number.
@@ -74,7 +87,7 @@ class Array:
             Array: the sum as a new array.
 
         """
-        pass
+        return self.__add__(other)
 
     def __sub__(self, other):
         """Element-wise subtracts an Array or number from this Array.
@@ -89,7 +102,8 @@ class Array:
             Array: the difference as a new array.
 
         """
-        pass
+        return self.__add__(-other)
+
 
     def __rsub__(self, other):
         """Element-wise subtracts this Array from a number or Array.
@@ -104,7 +118,17 @@ class Array:
             Array: the difference as a new array.
 
         """
-        pass
+        if isinstance(other,(int,float)):
+            return Array(self.shape, [-self.array[i] + other for i in range(len(self.array))])
+
+
+        assert len(self.array) == len(other), "Arrays do not have the same dimensions."
+        
+        if isinstance(self.array,bool) or isinstance(other,bool):
+            return NotImplemented
+
+        return Array(self.shape, [-self.array[i] + other.array[i] for i in range(len(self.array))])
+
 
     def __mul__(self, other):
         """Element-wise multiplies this Array with a number or array.
@@ -119,7 +143,16 @@ class Array:
             Array: a new array with every element multiplied with `other`.
 
         """
-        pass
+        if isinstance(other,(int,float)):
+            return Array(self.shape, [self.array[i] * other for i in range(len(self.array))])
+
+
+        assert len(self.array) == len(other), "Arrays do not have the same dimensions."
+        
+        if isinstance(self.array,bool) or isinstance(other,bool):
+            return NotImplemented
+
+        return Array(self.shape, [self.array[i] * other.array[i] for i in range(len(self.array))])
 
     def __rmul__(self, other):
         """Element-wise multiplies this Array with a number or array.
@@ -134,7 +167,6 @@ class Array:
             Array: a new array with every element multiplied with `other`.
 
         """
-        # Hint: this solution/logic applies for all r-methods
         return self.__mul__(other)
 
     def __eq__(self, other):
@@ -150,7 +182,7 @@ class Array:
             bool: True if the two arrays are equal (identical). False otherwise.
 
         """
-        pass
+        return self.array == other.array
 
     def is_equal(self, other):
         """Compares an Array element-wise with another Array or number.
@@ -170,8 +202,11 @@ class Array:
             ValueError: if the shape of self and other are not equal.
 
         """
+        if isinstance(other,(int,float)):
+            return [self.array[i] == other for i in range(len(self.array))]
 
-        pass
+        
+        return [self.array[i] == other.array[i] for i in range(len(self.array))]
 
     def min_element(self):
         """Returns the smallest value of the array.
@@ -183,7 +218,10 @@ class Array:
 
         """
 
-        pass
+        return min(self.array)
+
+    def max_element(self):
+        return max(self.array)
 
     def mean_element(self):
         """Returns the mean value of an array
@@ -194,4 +232,30 @@ class Array:
             float: the mean value
         """
 
-        pass
+        return sum(self.array)/len(self.array)
+
+
+    def __getitem__(self, item):
+        return self.array[item]
+
+    def __setitem__(self, item, value):
+        if not isinstance(self.array[item], type(value)):
+            raise ValueError(f"Arrays can only contain one type.\
+                \nThe desired value of type {type(value)} is not the same as the rest of the array of type {type(self.array[item])}.")
+        self.array[item] = value
+        return
+
+    def __len__(self):
+        return len(self.array)
+
+    def __pos__(self):
+        return Array(self.shape, [+x for x in self.array])
+
+    def __neg__(self):
+        return Array(self.shape, [-x for x in self.array])
+
+
+myarray = Array((3,1), [2, 3, 4])
+array2 = Array((3,1), 3,2,1)
+
+print(myarray.is_equal(2))
