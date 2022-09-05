@@ -1,6 +1,8 @@
 """
 Array class for assignment 2
 """
+import numpy as np
+    
 
 class Array:
 
@@ -36,8 +38,11 @@ class Array:
 
 
         self.shape = shape
+        self.iterator = 1
         self.array = [*values]
-
+        
+        self.__reshape(self.array) #reshapes a 1D list into the desired shape
+        self.__fill(self.array, values) # fills the array with the values
 
     def __str__(self):
         """Returns a nicely printable string representation of the array.
@@ -45,8 +50,15 @@ class Array:
         Returns:
             str: A string representation of the array.
 
+        Example:
+        [0,1], [2,3] -> [0,1]
+                        [2,3]
+
         """
-        return str(self.array)
+        self.__reshape(self.array) #reshapes a 1D list into the desired shape
+
+        return str(self.array).replace('],', ']\n')
+
 
     def __add__(self, other):
         """Element-wise adds Array with another Array or number.
@@ -63,6 +75,8 @@ class Array:
         """
 
         # check that the method supports the given arguments (check for data type and shape of array)
+
+
         if isinstance(other,(int,float)):
             return Array(self.shape, [self.array[i] + other for i in range(len(self.array))])
 
@@ -234,16 +248,50 @@ class Array:
 
         return sum(self.array)/len(self.array)
 
+    def __reshape(self, array):
+        
+        # Example reshaping
+        # zero = [0, 0, 0, 0, 0, 0, 0, 0, 0]
+        # zero = [[0 0], [0 0], [0 0], [0 0], [0 0], [0 0]]
+        # zero = [ [[0 0] [0 0]], [[0 0] [0 0]], [[0 0] [0 0]]]
+
+
+        for i in range(len(array)//self.shape[-self.iterator]):
+            if self.iterator == len(self.shape):           
+                self.array = array
+                return
+            array[i] = [array[i]]*self.shape[-self.iterator]
+        
+
+        array = array[:len(array)//self.shape[-self.iterator]]
+        if self.iterator < len(self.shape):
+            self.iterator += 1
+            self.__reshape(array)
+
+        return
+
+    def __fill(self, array, seq):
+        k = 0
+        for i in range(self.shape[0]):
+            for j in range(self.shape[1]):
+                for l in range(self.shape[2]):
+                    #print(i,j,l, k)
+                    array[i][j][l] = k
+                    k+=1
+
+        return array
+        
 
     def __getitem__(self, item):
         return self.array[item]
 
-    def __setitem__(self, item, value):
+        
+    """def __setitem__(self, item, value):
         if not isinstance(self.array[item], type(value)):
             raise ValueError(f"Arrays can only contain one type.\
                 \nThe desired value of type {type(value)} is not the same as the rest of the array of type {type(self.array[item])}.")
         self.array[item] = value
-        return
+        return"""
 
     def __len__(self):
         return len(self.array)
@@ -255,7 +303,10 @@ class Array:
         return Array(self.shape, [-x for x in self.array])
 
 
-myarray = Array((3,1), [2, 3, 4])
-array2 = Array((3,1), 3,2,1)
+myarray = Array((3,3,2), [i for i in range(3*3*2)])
+#myarray2 = Array((3,3,2), [i for i in range(3*3*2)])
+myarray[0][0][0] =99
+print(myarray,'s')
 
-print(myarray.is_equal(2))
+
+
