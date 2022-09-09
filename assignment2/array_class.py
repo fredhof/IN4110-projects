@@ -1,8 +1,7 @@
 """
 Array class for assignment 2
 """
-import numpy as np
-    
+
 
 class Array:
 
@@ -22,7 +21,7 @@ class Array:
             ValueError: If the values are not all of the same type.
             ValueError: If the number of values does not fit with the shape.
         """
-        # This allowes us to input lists aswell, so that Array(shape, [1,2,3]) == Array(shape, 1,2,3)
+        # This allowes us to input lists/tuples aswell, so that Array(shape, [1,2,3]) == Array(shape, 1,2,3)
         if len(values) == 1 and isinstance(values,tuple):
             values = values[0]
 
@@ -40,9 +39,8 @@ class Array:
         self.shape = shape
         self.iterator = 1
         self.array = [*values]
+        self.values = [*values]
         
-        self.__reshape(self.array) #reshapes a 1D list into the desired shape
-        self.__fill(self.array, values) # fills the array with the values
 
     def __str__(self):
         """Returns a nicely printable string representation of the array.
@@ -55,9 +53,11 @@ class Array:
                         [2,3]
 
         """
-        self.__reshape(self.array) #reshapes a 1D list into the desired shape
-
-        return str(self.array).replace('],', ']\n')
+        self.__reshape(self.array)
+        self.__fill(self.array, self.values)
+        array = self.array
+        self.array = [*self.values]
+        return str(array).replace('],', ']\n')
 
 
     def __add__(self, other):
@@ -132,17 +132,8 @@ class Array:
             Array: the difference as a new array.
 
         """
-        if isinstance(other,(int,float)):
-            return Array(self.shape, [-self.array[i] + other for i in range(len(self.array))])
-
-
-        assert len(self.array) == len(other), "Arrays do not have the same dimensions."
-        
-        if isinstance(self.array,bool) or isinstance(other,bool):
-            return NotImplemented
-
-        return Array(self.shape, [-self.array[i] + other.array[i] for i in range(len(self.array))])
-
+        other = self.__sub__(other)
+        return self.__neg(other)
 
     def __mul__(self, other):
         """Element-wise multiplies this Array with a number or array.
@@ -259,6 +250,7 @@ class Array:
         for i in range(len(array)//self.shape[-self.iterator]):
             if self.iterator == len(self.shape):           
                 self.array = array
+                print('a')
                 return
             array[i] = [array[i]]*self.shape[-self.iterator]
         
@@ -267,46 +259,48 @@ class Array:
         if self.iterator < len(self.shape):
             self.iterator += 1
             self.__reshape(array)
-
+        print('b')
         return
 
     def __fill(self, array, seq):
-        k = 0
-        for i in range(self.shape[0]):
-            for j in range(self.shape[1]):
-                for l in range(self.shape[2]):
-                    #print(i,j,l, k)
-                    array[i][j][l] = k
-                    k+=1
+        
+        """for i in range(len(self.shape)):
+            for j in range(self.shape[i]):
+                array[]
 
-        return array
+
+        return array"""
+        return
         
 
     def __getitem__(self, item):
-        return self.array[item]
-
+        self.__reshape(self.array)
+        getitem = self.array[item]
+        self.array = [*self.values]
+        return getitem
         
-    """def __setitem__(self, item, value):
-        if not isinstance(self.array[item], type(value)):
-            raise ValueError(f"Arrays can only contain one type.\
-                \nThe desired value of type {type(value)} is not the same as the rest of the array of type {type(self.array[item])}.")
-        self.array[item] = value
-        return"""
 
     def __len__(self):
         return len(self.array)
 
-    def __pos__(self):
-        return Array(self.shape, [+x for x in self.array])
+    def __pos(self, array):
+        return Array(self.shape, [+x for x in array])
 
-    def __neg__(self):
-        return Array(self.shape, [-x for x in self.array])
+    def __neg(self, array):
+        return Array(self.shape, [-x for x in array])
+
+if __name__ == '__main__':
+    
+    myarray2 = Array((3,3), *range(3*3)) # = Array = [(3,3), 0,1,..,8]
+    myarray3 = Array((3,4,2), *range(3*4*2))
+    myarrayX = Array((3,6,1,7,9), *range(3*6*1*7*9))
+
+    import numpy as np # class doesnt use numpy, this is just to check the shape of the array
+    print(np.shape(myarray2), np.shape(myarray3), np.shape(myarrayX),'\n')
 
 
-myarray = Array((3,3,2), [i for i in range(3*3*2)])
-#myarray2 = Array((3,3,2), [i for i in range(3*3*2)])
-myarray[0][0][0] =99
-print(myarray,'s')
+   
 
 
 
+    print(myarray3)
