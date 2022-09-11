@@ -3,54 +3,56 @@ Tests for our array class
 """
 
 from array_class import Array
-import numpy as np
 
+testarray1d = Array((3,1), 1,2,3)
+otherarray1d = Array((3,1), 1,2,3)
 
-# UNCOMMENT ARRAYS IF USING PYTEST
+testarray2d = Array((3,2), 1,2,3,4,5,6)
+otherarray2d = Array((3,2), 1,2,3,4,5,6)
+print(testarray2d)
 
-testarray = Array((3,1), 1,2,3)
-other = Array((3,1), 1,2,3)
+num = 2
 
 # 1D tests (Task 4)
-
-
 def test_str_1d():
-    assert str(testarray) == str([1, 2, 3]), "Failed test"
-
+    assert print(testarray1d) == print(otherarray1d) == print([1, 2, 3]), "Failed test" #will print the statements
 
 def test_add_1d():
-    assert testarray+other == other+testarray == Array((3,1),[2,4,6]), "Failed test"
-
+    assert testarray1d+otherarray1d == otherarray1d+testarray1d == Array((3,1),[2,4,6]), "Failed test"
+    assert testarray1d+num == otherarray1d+num == num+testarray1d == num+otherarray1d == Array((3,1), [3,4,5]), "Failed test"
 
 def test_sub_1d():
-    assert testarray-other == other-testarray == Array((3,1),[0,0,0]), "Failed test"
+    assert testarray1d-otherarray1d == otherarray1d-testarray1d == Array((3,1),[0,0,0]), "Failed test"
+    assert testarray1d-num == otherarray1d-num == Array((3,1), [-1,0,1]) != num-testarray1d == num-otherarray1d, "Failed test"
+    assert num-testarray1d == num-otherarray1d == Array((3,1), [1,0,-1]) != testarray1d-num == otherarray1d-num, "Failed test"
 
 
 def test_mul_1d():
-    assert testarray*other == other*testarray == Array((3,1),[1,4,9]), "Failed test"
-
+    assert testarray1d*otherarray1d == otherarray1d*testarray1d == Array((3,1),[1,4,9]), "Failed test"
+    assert testarray1d*num == otherarray1d*num == num*testarray1d == num*otherarray1d == Array((3,1), [2,4,6]), "Failed test"
 
 def test_eq_1d():
-    assert testarray == other and other == testarray, "Failed test"
+    assert testarray1d == otherarray1d and otherarray1d == testarray1d, "Failed test"
 
 
 def test_same_1d():
-    assert testarray.is_equal(other) == other.is_equal(testarray) == [True,True,True], "Failed test" 
+    assert testarray1d.is_equal(otherarray1d) == otherarray1d.is_equal(testarray1d) == [True,True,True], "Failed test" 
 
 
 def test_smallest_1d():
-    assert testarray.min_element() == other.min_element() == 1, "Failed test"
+    assert testarray1d.min_element() == otherarray1d.min_element() == 1, "Failed test"
 
 
 def test_mean_1d():
-    assert testarray.mean_element() == other.mean_element() == 2, "Failed test"
+    assert testarray1d.mean_element() == otherarray1d.mean_element() == 2, "Failed test"
 
 
 # 2D tests (Task 6)
 
 
 def test_add_2d():
-    pass
+    assert testarray1d+otherarray1d == otherarray1d+testarray1d == Array((3,2),[2,4,6,8,10,12]), "Failed test"
+    assert testarray1d+num == otherarray1d+num == num+testarray1d == num+otherarray1d == Array((3,2),[2,4,6,8,10,12]), "Failed test"
 
 
 def test_mult_2d():
@@ -71,8 +73,9 @@ if __name__ == "__main__":
     (or run them manually by running this file).
     Make sure to have pytest installed (pip install pytest, or install anaconda).
     """
-    testarray = Array((3,1), 1,2,3)
-    other = Array((3,1), 1,2,3)
+    #testarray1d = Array((3,1), 1,2,3)
+    #otherarray1d = Array((3,1), 1,2,3)
+    #num = 2
     # Task 4: 1d tests
     test_str_1d()
     test_add_1d()

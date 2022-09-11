@@ -3,6 +3,9 @@ Array class for assignment 2
 """
 
 
+import re
+
+
 class Array:
 
     def __init__(self, shape, *values):
@@ -38,6 +41,7 @@ class Array:
 
         self.shape = shape
         self.iterator = 1
+        self.fill_iterator = 1
         self.array = [*values]
         self.values = [*values]
         
@@ -57,6 +61,7 @@ class Array:
         self.__fill(self.array, self.values)
         array = self.array
         self.array = [*self.values]
+  
         return str(array).replace('],', ']\n')
 
 
@@ -80,12 +85,11 @@ class Array:
         if isinstance(other,(int,float)):
             return Array(self.shape, [self.array[i] + other for i in range(len(self.array))])
 
-
-        assert len(self.array) == len(other), "Arrays do not have the same dimensions."
-        
         if isinstance(self.array,bool) or isinstance(other,bool):
             return NotImplemented
 
+        assert len(self.array) == len(other.array), "Arrays do not have the same dimensions."
+               
         return Array(self.shape, [self.array[i] + other.array[i] for i in range(len(self.array))])
 
     def __radd__(self, other):
@@ -116,7 +120,15 @@ class Array:
             Array: the difference as a new array.
 
         """
-        return self.__add__(-other)
+        if isinstance(other,(int,float)):
+            return Array(self.shape, [self.array[i] - other for i in range(len(self.array))])
+        
+        if isinstance(self.array,bool) or isinstance(other,bool):
+            return NotImplemented
+
+        assert len(self.array) == len(other.array), "Arrays do not have the same dimensions."
+
+        return Array(self.shape, [self.array[i] - other.array[i] for i in range(len(self.array))])
 
 
     def __rsub__(self, other):
@@ -132,8 +144,16 @@ class Array:
             Array: the difference as a new array.
 
         """
-        other = self.__sub__(other)
-        return self.__neg(other)
+        if isinstance(other,(int,float)):
+            return Array(self.shape, [-self.array[i] + other for i in range(len(self.array))])
+
+        if isinstance(self.array,bool) or isinstance(other,bool):
+            return NotImplemented
+
+        assert len(self.array) == len(other.array), "Arrays do not have the same dimensions."
+        
+        return Array(self.shape, [-self.array[i] + other.array[i] for i in range(len(self.array))])
+
 
     def __mul__(self, other):
         """Element-wise multiplies this Array with a number or array.
@@ -151,12 +171,11 @@ class Array:
         if isinstance(other,(int,float)):
             return Array(self.shape, [self.array[i] * other for i in range(len(self.array))])
 
-
-        assert len(self.array) == len(other), "Arrays do not have the same dimensions."
-        
         if isinstance(self.array,bool) or isinstance(other,bool):
             return NotImplemented
 
+        assert len(self.array) == len(other.array), "Arrays do not have the same dimensions."
+        
         return Array(self.shape, [self.array[i] * other.array[i] for i in range(len(self.array))])
 
     def __rmul__(self, other):
@@ -250,27 +269,28 @@ class Array:
         for i in range(len(array)//self.shape[-self.iterator]):
             if self.iterator == len(self.shape):           
                 self.array = array
-                print('a')
-                return
+                return 
             array[i] = [array[i]]*self.shape[-self.iterator]
         
-
         array = array[:len(array)//self.shape[-self.iterator]]
         if self.iterator < len(self.shape):
             self.iterator += 1
             self.__reshape(array)
-        print('b')
         return
 
     def __fill(self, array, seq):
+        import numpy as np
+        print(np.shape(array), array)
         
-        """for i in range(len(self.shape)):
+        for i in range(len(self.shape)):
             for j in range(self.shape[i]):
-                array[]
+                array[i][j] = self.values[self.fill_iterator]
+                self.fill_iterator += 1
 
-
-        return array"""
-        return
+        if self.fill_iterator < len(self.shape):
+            
+            self.__fill(array, seq)
+        return array
         
 
     def __getitem__(self, item):
@@ -279,15 +299,9 @@ class Array:
         self.array = [*self.values]
         return getitem
         
+    def __len__(self, arr):
+        return len(arr)
 
-    def __len__(self):
-        return len(self.array)
-
-    def __pos(self, array):
-        return Array(self.shape, [+x for x in array])
-
-    def __neg(self, array):
-        return Array(self.shape, [-x for x in array])
 
 if __name__ == '__main__':
     
@@ -295,12 +309,7 @@ if __name__ == '__main__':
     myarray3 = Array((3,4,2), *range(3*4*2))
     myarrayX = Array((3,6,1,7,9), *range(3*6*1*7*9))
 
-    import numpy as np # class doesnt use numpy, this is just to check the shape of the array
-    print(np.shape(myarray2), np.shape(myarray3), np.shape(myarrayX),'\n')
+    testarray2d = Array((3,2), 1,2,3,4,5,6)
+    print(testarray2d+testarray2d)
 
 
-   
-
-
-
-    print(myarray3)
