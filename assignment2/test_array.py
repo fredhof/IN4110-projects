@@ -51,8 +51,8 @@ def test_mean_1d():
 
 
 def test_add_2d():
-    assert testarray1d+otherarray1d == otherarray1d+testarray1d == Array((3,2),[2,4,6,8,10,12]), "Failed test"
-    assert testarray1d+num == otherarray1d+num == num+testarray1d == num+otherarray1d == Array((3,2),[2,4,6,8,10,12]), "Failed test"
+    assert testarray2d+otherarray2d == otherarray2d+testarray2d == Array((3,2),[2,4,6,8,10,12]), "Failed test"
+    assert testarray2d+num == otherarray2d+num == num+testarray2d == num+otherarray2d == Array((3,2),[3,4,5,6,7,8]), "Failed test"
 
 
 def test_mult_2d():

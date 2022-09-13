@@ -40,8 +40,6 @@ class Array:
 
 
         self.shape = shape
-        self.iterator = 1
-        self.fill_iterator = 1
         self.array = [*values]
         self.values = [*values]
         
@@ -57,12 +55,11 @@ class Array:
                         [2,3]
 
         """
-        self.__reshape(self.array)
-        self.__fill(self.array, self.values)
-        array = self.array
-        self.array = [*self.values]
-  
-        return str(array).replace('],', ']\n')
+        arr = self._reshape(self.values)
+
+
+        return str(arr).replace('],', ']\n')
+        
 
 
     def __add__(self, other):
@@ -120,16 +117,7 @@ class Array:
             Array: the difference as a new array.
 
         """
-        if isinstance(other,(int,float)):
-            return Array(self.shape, [self.array[i] - other for i in range(len(self.array))])
-        
-        if isinstance(self.array,bool) or isinstance(other,bool):
-            return NotImplemented
-
-        assert len(self.array) == len(other.array), "Arrays do not have the same dimensions."
-
-        return Array(self.shape, [self.array[i] - other.array[i] for i in range(len(self.array))])
-
+        return self.__add__(-other)
 
     def __rsub__(self, other):
         """Element-wise subtracts this Array from a number or Array.
@@ -144,16 +132,8 @@ class Array:
             Array: the difference as a new array.
 
         """
-        if isinstance(other,(int,float)):
-            return Array(self.shape, [-self.array[i] + other for i in range(len(self.array))])
-
-        if isinstance(self.array,bool) or isinstance(other,bool):
-            return NotImplemented
-
-        assert len(self.array) == len(other.array), "Arrays do not have the same dimensions."
         
-        return Array(self.shape, [-self.array[i] + other.array[i] for i in range(len(self.array))])
-
+        return -self.__sub__(other)
 
     def __mul__(self, other):
         """Element-wise multiplies this Array with a number or array.
@@ -258,58 +238,44 @@ class Array:
 
         return sum(self.array)/len(self.array)
 
-    def __reshape(self, array):
+    def _reshape(self,vals):
         
         # Example reshaping
         # zero = [0, 0, 0, 0, 0, 0, 0, 0, 0]
         # zero = [[0 0], [0 0], [0 0], [0 0], [0 0], [0 0]]
         # zero = [ [[0 0] [0 0]], [[0 0] [0 0]], [[0 0] [0 0]]]
-
-
-        for i in range(len(array)//self.shape[-self.iterator]):
-            if self.iterator == len(self.shape):           
-                self.array = array
-                return 
-            array[i] = [array[i]]*self.shape[-self.iterator]
         
-        array = array[:len(array)//self.shape[-self.iterator]]
-        if self.iterator < len(self.shape):
-            self.iterator += 1
-            self.__reshape(array)
-        return
-
-    def __fill(self, array, seq):
-        import numpy as np
-        print(np.shape(array), array)
-        
-        for i in range(len(self.shape)):
-            for j in range(self.shape[i]):
-                array[i][j] = self.values[self.fill_iterator]
-                self.fill_iterator += 1
-
-        if self.fill_iterator < len(self.shape):
+        for i in range(1, len(self.shape)):
             
-            self.__fill(array, seq)
-        return array
-        
+            arr1 = []
+            point = len(vals) // self.shape[-i]
+            
+
+            for j in range(point):
+                arr2 = []
+
+                for k in range(self.shape[-i]):
+                    arr2.append(vals[k + j*self.shape[-i]])
+                
+                arr1.append(arr2)
+            vals = arr1
+
+        return vals
+
 
     def __getitem__(self, item):
-        self.__reshape(self.array)
-        getitem = self.array[item]
-        self.array = [*self.values]
-        return getitem
+        return self._reshape(self.values)[item]
         
     def __len__(self, arr):
         return len(arr)
 
+    def __neg__(self):
+        return Array(self.shape, [-x for x in self.array])
 
 if __name__ == '__main__':
     
     myarray2 = Array((3,3), *range(3*3)) # = Array = [(3,3), 0,1,..,8]
-    myarray3 = Array((3,4,2), *range(3*4*2))
+    myarray3 = Array((3,3,2), *range(3*3*2))
     myarrayX = Array((3,6,1,7,9), *range(3*6*1*7*9))
 
-    testarray2d = Array((3,2), 1,2,3,4,5,6)
-    print(testarray2d+testarray2d)
-
-
+    print(2-myarray3)
