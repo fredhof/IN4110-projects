@@ -2,10 +2,6 @@
 Array class for assignment 2
 """
 
-
-import re
-
-
 class Array:
 
     def __init__(self, shape, *values):
@@ -14,6 +10,9 @@ class Array:
         - int
         - float
         - bool
+
+        Imports:
+            module: Imports parts of the Python standard library "math", specifically math.prod()
 
         Args:
             shape (tuple): shape of the array as a tuple. A 1D array with n elements will have shape = (n,)..
@@ -25,6 +24,9 @@ class Array:
             ValueError: If the number of values does not fit with the shape.
         """
         # This allowes us to input lists/tuples aswell, so that Array(shape, [1,2,3]) == Array(shape, 1,2,3)
+
+        from math import prod # import product summation from Pythons math library
+
         if len(values) == 1 and isinstance(values,tuple):
             values = values[0]
 
@@ -34,14 +36,13 @@ class Array:
         if not all(isinstance(x, type(values[0])) for x in values[1:]):
             raise ValueError("The values of are not all of the same type.")
 
-        from math import prod # import product summation from Pythons math library
         if prod(shape) != len(values):
             raise ValueError(f"The number of values: {len(values)}, do not fit the shape of the array: {shape}.")
 
 
         self.shape = shape
-        self.array = [*values]
-        self.values = [*values]
+        self.array = self.values = [*values]
+     
         
 
     def __str__(self):
@@ -85,7 +86,7 @@ class Array:
         if isinstance(self.array,bool) or isinstance(other,bool):
             return NotImplemented
 
-        assert len(self.array) == len(other.array), "Arrays do not have the same dimensions."
+        assert len(self.array) == len(other.array), "Arrays do not have the same dimensionality."
                
         return Array(self.shape, [self.array[i] + other.array[i] for i in range(len(self.array))])
 
@@ -154,7 +155,7 @@ class Array:
         if isinstance(self.array,bool) or isinstance(other,bool):
             return NotImplemented
 
-        assert len(self.array) == len(other.array), "Arrays do not have the same dimensions."
+        assert len(self.array) == len(other.array), "Arrays do not have the same dimensionality."
         
         return Array(self.shape, [self.array[i] * other.array[i] for i in range(len(self.array))])
 
@@ -225,6 +226,15 @@ class Array:
         return min(self.array)
 
     def max_element(self):
+        """Returns the largest value of the array.
+
+        Only needs to work for type int and float (not boolean).
+
+        Returns:
+            float: The value of the largest element in the array.
+
+        """
+        
         return max(self.array)
 
     def mean_element(self):
@@ -239,19 +249,21 @@ class Array:
         return sum(self.array)/len(self.array)
 
     def _reshape(self,vals):
-        
-        # Example reshaping
-        # zero = [0, 0, 0, 0, 0, 0, 0, 0, 0]
-        # zero = [[0 0], [0 0], [0 0], [0 0], [0 0], [0 0]]
-        # zero = [ [[0 0] [0 0]], [[0 0] [0 0]], [[0 0] [0 0]]]
+        """ Reshapes the 1D Array into a ND Array of desired shape. Works backwards from the "last" dimension, e.g (3,2,4) "last" = 4
+
+        Args:
+            vals (list): 1D list of elements reshaped into the desired shape that the value was initialized in
+
+        Returns:
+            list: (nested) list of the elements in the desired shape
+        """
         
         for i in range(1, len(self.shape)):
             
-            arr1 = []
-            point = len(vals) // self.shape[-i]
-            
-
-            for j in range(point):
+            arr1 = [] 
+            pos = len(vals) // self.shape[-i] # the number of values in the selected dimension
+            # equal to the product of the other dimensions, e.g for "last = 4" -> pos = 6
+            for j in range(pos):
                 arr2 = []
 
                 for k in range(self.shape[-i]):
@@ -263,19 +275,34 @@ class Array:
         return vals
 
 
-    def __getitem__(self, item):
-        return self._reshape(self.values)[item]
+    def __getitem__(self, idx):
+        """Finds the given item at the idx (index) given. Then calls _reshape to reshape 1D into ND. Python then does the magic on the ND array and finds correct value.
+
+        Args:
+            idx (int): index of desired value
+
+        Returns:
+            int, float, list(int, float): _description_
+        """
+        
+        return self._reshape(self.values)[idx]
         
     def __len__(self, arr):
+        """Finds the length of arr (list)
+
+        Args:
+            arr (list): a 1-dimensional list
+
+        Returns:
+            int: The length of arr
+        """
+       
         return len(arr)
 
     def __neg__(self):
+        """ Adds -operator functionality to the Array class.
+
+        Returns:
+            Array: flips sign on all elements in array
+        """
         return Array(self.shape, [-x for x in self.array])
-
-if __name__ == '__main__':
-    
-    myarray2 = Array((3,3), *range(3*3)) # = Array = [(3,3), 0,1,..,8]
-    myarray3 = Array((3,3,2), *range(3*3*2))
-    myarrayX = Array((3,6,1,7,9), *range(3*6*1*7*9))
-
-    print(2-myarray3)
