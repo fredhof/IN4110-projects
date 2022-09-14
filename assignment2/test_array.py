@@ -3,6 +3,7 @@ Tests for our array class, numpy will be used to test nd arrays if test_nd = Tru
 """
 
 from array_class import Array
+import pytest
 
 
 testarray1d = Array((3,1), 1,2,3)
@@ -13,7 +14,7 @@ otherarray2d = Array((3,2), *range(1,7))
 
 num = 2
 
-test_nd = False
+test_nd = False # will use numpy
 if test_nd:
     import numpy as np
     testarraynd = Array((4,2,1,5), *range(4*2*1*5)) # tested with numpy
@@ -78,22 +79,23 @@ def test_mean_2d():
 
 # nD tests
 
-
+@pytest.mark.skipif(test_nd != True, reason="Test uses numpy.")
 def test_add_nd():
     assert testarraynd+otherarraynd == otherarraynd+testarraynd == np.array(testarraynd)+np.array(otherarraynd), "Failed test"
     assert testarraynd+num == otherarraynd+num == num+testarraynd ==  num+otherarraynd == np.array(testarraynd)+num, "Failed test"
 
-
+@pytest.mark.skipif(test_nd != True, reason="Test uses numpy.")
 def test_mult_nd():
     assert testarraynd*otherarraynd == otherarraynd*testarraynd == np.array(testarraynd) * np.array(testarraynd), "Failed test"
     assert testarraynd*num == otherarraynd*num == num*testarraynd == num*otherarraynd == np.array(testarraynd)*num, "Failed test"
 
 
-
+@pytest.mark.skipif(test_nd != True, reason="Test uses numpy.")
 def test_same_nd():
     assert testarraynd.is_equal(otherarraynd) == otherarraynd.is_equal(testarraynd) == 4*2*1*5*[True], "Failed test" 
 
 
+@pytest.mark.skipif(test_nd != True, reason="Test uses numpy.")
 def test_mean_nd():
     assert testarraynd.mean_element() == otherarraynd.mean_element() == np.mean(np.array(testarraynd[:])), "Failed test" # fails for some reason without [:]
 
