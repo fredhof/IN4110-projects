@@ -1,19 +1,8 @@
 """pure Python implementation of image filters"""
 
 import numpy as np
-from PIL import Image
-from itertools import chain
-import cProfile
 
-from importer import rainloc
-import time
-#import sys
-#sys.path.append(Arrayloc)
-#from array_class import Array
-
-rain = Image.open(rainloc)
-
-def python_color2gray(image: np.array) -> np.array:
+def python_color2gray(image: list, weights: list) -> list:
     """Convert rgb pixel array to grayscale
 
     Args:
@@ -21,22 +10,18 @@ def python_color2gray(image: np.array) -> np.array:
     Returns:
         np.array: gray_image
     """
-    gray_image = np.asarray(image).tolist()
+    
     # iterate through the pixels, and apply the grayscale transform
-    weights = [0.21, 0.72, 0.07]
-    tid = time.time()
-    dims = len(gray_image), len(gray_image[0]), len(gray_image[:][0][0])
-    for i in range(dims[0]):
-        for j in range(dims[1]):
-            for k in range(dims[2]):
-                gray_image[i][j][k] *= weights[k]
-            gray_image[i][j] = sum(gray_image[i][j])
-    print(time.time()-tid)
-    gray_image = Image.fromarray(np.uint8(gray_image))
+    gray_image = np.empty((len(image), len(image[0])))
+
+    for i in range(gray_image.shape[0]):
+        for j in range(gray_image.shape[1]):
+            gray_image[i][j] = image[i][j][0]*weights[0] + image[i][j][1]*weights[1] + image[i][j][2]*weights[2]
+    
     return gray_image
 
 
-def python_color2sepia(image: np.array) -> np.array:
+def python_color2sepia(image: list) -> list:
     """Convert rgb pixel array to sepia
 
     Args:
@@ -53,6 +38,3 @@ def python_color2sepia(image: np.array) -> np.array:
     # Return image
     # don't forget to make sure it's the right type!
     return sepia_image
-
-
-python_color2gray(rain)

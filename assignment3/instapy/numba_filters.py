@@ -1,9 +1,9 @@
 """numba-optimized filters"""
-from numba import jit
+from numba import njit, prange
 import numpy as np
 
-
-def numba_color2gray(image: np.array) -> np.array:
+@njit(fastmath=True, parallel=True)
+def numba_color2gray(image: np.array, weights: np.array) -> np.array:
     """Convert rgb pixel array to grayscale
 
     Args:
@@ -11,14 +11,18 @@ def numba_color2gray(image: np.array) -> np.array:
     Returns:
         np.array: gray_image
     """
-    gray_image = np.empty_like(image)
+    
     # iterate through the pixels, and apply the grayscale transform
+    gray_image = np.empty(image.shape[0:2]) # reduce RGB to grayscale (y,x,3) -> (y,x), massive speedup
 
-    ...
+    for i in prange(image.shape[0]):
+        for j in prange(image.shape[1]):
+            gray_image[i][j] = image[i][j][0]*weights[0] + image[i][j][1]*weights[1] + image[i][j][2]*weights[2]
+    
     return gray_image
 
-
-def numba_color2sepia(image: np.array) -> np.array:
+@njit(fastmath=True, parallel=True)
+def python_color2sepia(image: list) -> list:
     """Convert rgb pixel array to sepia
 
     Args:
@@ -35,6 +39,3 @@ def numba_color2sepia(image: np.array) -> np.array:
     # Return image
     # don't forget to make sure it's the right type!
     return sepia_image
-
-
-...

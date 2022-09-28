@@ -1,15 +1,8 @@
 """numpy implementation of image filters"""
-
 from typing import Optional
 import numpy as np
-from PIL import Image
-from importer import rainloc
-import cProfile
-rain = Image.open(rainloc)
 
-import time
-
-def numpy_color2gray(image: np.array) -> np.array:
+def numpy_color2gray(image: np.array, weights: np.array) -> np.array:
     """Convert rgb pixel array to grayscale
 
     Args:
@@ -17,18 +10,11 @@ def numpy_color2gray(image: np.array) -> np.array:
     Returns:
         np.array: gray_image
     """
+    # np.round(np.dot(image,weights),10) == np.round(image @ weights,10), dif
+    # image[:,:,0]*weights[0] + image[:,:,1]*weights[1] + image[:,:,2]*weights[2] # identical to np.dot(image, weights)
+    return image @ weights #matrix multiplication using np.matmul
 
-    gray_image = np.asarray(image)
-    weights = [0.21, 0.72, 0.07]
-    tid = time.time()
-    gray_image = np.dot(gray_image, weights)
-    print(time.time()-tid)
-    gray_image = Image.fromarray(np.uint8(gray_image))
-    
-    return gray_image
-
-
-def numpy_color2sepia(image: np.array, k: Optional[float] = 1) -> np.array:
+def numpy_color2sepia(image: np.array, weights: np.array, k: Optional[float] = 1) -> np.array:
     """Convert rgb pixel array to sepia
 
     Args:
@@ -44,25 +30,26 @@ def numpy_color2sepia(image: np.array, k: Optional[float] = 1) -> np.array:
     Returns:
         np.array: sepia_image
     """
+    # below is non-tunable sepia filter
+    """image = image @ weights.T
+    return image/np.max(image)*255"""
 
     if not 0 <= k <= 1:
         # validate k (optional)
         raise ValueError(f"k must be between [0-1], got {k=}")
 
-    sepia_image = ...
+    
+    #inv = np.linalg.inv(weights)
+    #k=0 should return identity: id = weights @ k
+    #k=1 should return : weights = weights @ k
+    #weights *= k
+    #print(np.around(weights @ inv))
+    print(k)
+    a = np.linalg.pinv(weights)
+    b = (np.linalg.pinv(a @ np.identity(3)/(k)))
+    #sep = image @ (weights @ k).T
+    image = image @ b.T
+    print(np.max(image))
+    image = image/np.max(image)*255
 
-    # define sepia matrix (optional: with `k` tuning parameter for bonus task 13)
-    sepia_matrix = ...
-
-    # HINT: For version without adaptive sepia filter, use the same matrix as in the pure python implementation
-    # use Einstein sum to apply pixel transform matrix
-    # Apply the matrix filter
-    sepia_image = ...
-
-    # Check which entries have a value greater than 255 and set it to 255 since we can not display values bigger than 255
-    ...
-
-    # Return image (make sure it's the right type!)
-    return sepia_image
-
-numpy_color2gray(rain)
+    return image

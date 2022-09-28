@@ -1,7 +1,7 @@
 from setuptools import setup
 
 # IN4110: set to True when you are ready for the Cython implementation in Task 5
-use_cython = False
+use_cython = True
 
 
 if use_cython:
@@ -21,8 +21,10 @@ if use_cython:
             define_macros=[
                 ("CYTHON_TRACE", "1"),
                 ("CYTHON_TRACE_NOGIL", "1"),
+                ("NPY_NO_DEPRECATED_API", "NPY_1_7_API_VERSION"),
             ],
-        ),
+            extra_compile_args=['-ffast-math'],
+        )
     ]
     cython_directives = {
         "language_level": 3,
