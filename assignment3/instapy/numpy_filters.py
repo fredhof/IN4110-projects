@@ -2,7 +2,7 @@
 from typing import Optional
 import numpy as np
 
-def numpy_color2gray(image: np.array, weights: np.array) -> np.array:
+def numpy_color2gray(image: np.array, weights: np.array, k: Optional[float]) -> np.array:
     """Convert rgb pixel array to grayscale
 
     Args:
@@ -30,26 +30,11 @@ def numpy_color2sepia(image: np.array, weights: np.array, k: Optional[float] = 1
     Returns:
         np.array: sepia_image
     """
-    # below is non-tunable sepia filter
-    """image = image @ weights.T
-    return image/np.max(image)*255"""
 
     if not 0 <= k <= 1:
         # validate k (optional)
         raise ValueError(f"k must be between [0-1], got {k=}")
 
-    
-    #inv = np.linalg.inv(weights)
-    #k=0 should return identity: id = weights @ k
-    #k=1 should return : weights = weights @ k
-    #weights *= k
-    #print(np.around(weights @ inv))
-    print(k)
-    a = np.linalg.pinv(weights)
-    b = (np.linalg.pinv(a @ np.identity(3)/(k)))
-    #sep = image @ (weights @ k).T
-    image = image @ b.T
-    print(np.max(image))
-    image = image/np.max(image)*255
+    image = image * (1-k) + image @ weights.T * k
 
-    return image
+    return image/np.max(image)*255

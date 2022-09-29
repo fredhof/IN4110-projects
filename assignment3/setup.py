@@ -5,6 +5,11 @@ use_cython = True
 
 
 if use_cython:
+    #if you want to compile with clang
+    #import os
+    #os.environ["CXX"] = "clang"
+    #os.environ["CC"] = "clang"
+    
     from setuptools import Extension
     import numpy as np
     from Cython.Build import cythonize
@@ -23,7 +28,7 @@ if use_cython:
                 ("CYTHON_TRACE_NOGIL", "1"),
                 ("NPY_NO_DEPRECATED_API", "NPY_1_7_API_VERSION"),
             ],
-            extra_compile_args=['-ffast-math'],
+            extra_compile_args=['-ffast-math', '-march=native', '-O3']
         )
     ]
     cython_directives = {
