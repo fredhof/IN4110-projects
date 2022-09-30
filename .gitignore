@@ -2,5 +2,5 @@ __pycache__
 build/
 *.so
 *.lprof
-**/assignment3/.html
-**/assignment3/.c
+**/assignment3/instapy/*.html
+**/assignment3/instapy/*.c

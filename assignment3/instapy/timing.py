@@ -88,8 +88,8 @@ def make_reports(filename: str = importer.rainloc, calls: int = 5):
     #Image.fromarray(np.uint8(cython_filters.cython_color2sepia(np.array(image), sepia_weights, k=0.5))).save('pic2.jpg')
     print(f"Writing performance report (timed with timeit.timeit) to {writing_file}...")
     
-    with open(writing_file, "w") as file:
-        
+    with open(writing_file, "a") as file:
+        file.write("-"*100); file.write("\n")
         file.write(f"Timing performed using timeit.timeit. \nCPU:{get_processor_name()} \nfile used: {image.filename} \ndimensions(width, heigth, 3) of file: {image.size}\n")
         file.write("-"*100); file.write("\n"*2)
         for color in range(len(filter_colors)):

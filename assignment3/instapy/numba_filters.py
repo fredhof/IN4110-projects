@@ -51,8 +51,9 @@ def numba_color2sepia(image: np.array, weights: np.array, k: Optional[float] = 1
     maxx = 0  
     for i in range(image.shape[0]):
         for j in range(image.shape[1]):
-            if max(sepia_image[i][j]) > maxx:
-                    maxx = max(sepia_image[i][j])
+            for l in range(image.shape[2]):
+                if sepia_image[i][j][l] > maxx:
+                    maxx = sepia_image[i][j][l] 
 
     for i in prange(image.shape[0]):
         for j in prange(image.shape[1]):
