@@ -1,14 +1,16 @@
-Timing performed using timeit.timeit with file: /home/fredrik/Documents/IN4110/IN3110-fredhof/assignment3/test/rain.jpg 
-dimensions(width, heigth): (600, 400)
+Timing performed using timeit.timeit. 
+CPU: AMD Ryzen 5 5600X 6-Core Processor 
+file used: /home/fredrik/Documents/IN4110/IN3110-fredhof/assignment3/test/rain.jpg 
+dimensions(width, heigth, 3) of file: (600, 400)
 ----------------------------------------------------------------------------------------------------
 
-Reference (pure Python) filter average time (calls=10) color2gray: 1.020e-01s 
-numpy color2gray: 1.721e-03s (speedup=59.24x)
-cython color2gray: 5.793e-04s (speedup=176.01x)
-numba color2gray: 3.967e-04s (speedup=257.02x)
+Reference (pure Python) filter average time (calls=10) color2gray: 4.19e-02s 
+numpy color2gray: 4.83e-04s (speedup=86.61x)
+cython color2gray: 2.43e-04s (speedup=172.37x)
+numba color2gray: 4.77e-05s (speedup=877.62x)
 
-Reference (pure Python) filter average time (calls=10) color2sepia: 9.164e-01s 
-numpy color2sepia: 1.981e-02s (speedup=46.26x)
-cython color2sepia: 5.324e-03s (speedup=172.13x)
-numba color2sepia: 5.523e-03s (speedup=165.94x)
+Reference (pure Python) filter average time (calls=10) color2sepia: 3.26e-01s 
+numpy color2sepia: 3.54e-03s (speedup=92.12x)
+cython color2sepia: 1.84e-03s (speedup=177.59x)
+numba color2sepia: 9.05e-04s (speedup=360.66x)
 

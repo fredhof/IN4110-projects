@@ -4,6 +4,8 @@ setup.py
 instapy/__init__.py
 instapy/__main__.py
 instapy/cli.py
+instapy/cython_filters.c
+instapy/importer.py
 instapy/io.py
 instapy/numba_filters.py
 instapy/numpy_filters.py

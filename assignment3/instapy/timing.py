@@ -5,6 +5,7 @@ Can be executed as `python3 -m instapy.timing`
 
 For Task 6.
 """
+from concurrent.futures import process
 import timeit 
 import instapy
 from . import io
@@ -13,8 +14,27 @@ import numpy as np
 from PIL import Image
 
 
+import os, platform, subprocess, re
 
-from . import python_filters, numpy_filters, numba_filters, cython_filters, importer #imports *.py and cython_filters.so
+def get_processor_name():
+    if platform.system() == "Windows":
+        return platform.processor()
+    elif platform.system() == "Darwin": #macos, might not work python 3.8+? if so
+        os.environ['PATH'] = os.environ['PATH'] + os.pathsep + '/usr/sbin'
+        command ="sysctl -n machdep.cpu.brand_string"
+        return subprocess.check_output(command).strip()
+    elif platform.system() == "Linux":
+        command = "cat /proc/cpuinfo"
+        all_info = subprocess.check_output(command, shell=True).decode().strip()
+        for line in all_info.split("\n"):
+            if "model name" in line:
+                return re.sub( ".*model name.*:", "", line,1)
+    return ""
+
+
+
+
+from instapy import python_filters, numpy_filters, numba_filters, cython_filters, importer #imports *.py and cython_filters.so
 
 def time_one(filter_function: Callable, image, weights, k: float = 1., calls: int = 5) -> float:
     """Return the time for one call
@@ -43,7 +63,7 @@ def time_one(filter_function: Callable, image, weights, k: float = 1., calls: in
         # python indexes/loops faster with lists than arrays
         image_array= image_array.tolist()
         weights = weights.tolist()
-
+    
     return timeit.timeit(lambda: filter_function(image_array, weights, k), number = calls)/calls # average time
 
 
@@ -63,13 +83,14 @@ def make_reports(filename: str = importer.rainloc, calls: int = 5):
 
     filter_colors = ["color2gray", "color2sepia"]  
     weights = [gray_weights, sepia_weights]
-    writing_file = "timing-report.txt"
-    
+    writing_file = "timing-report" + ".txt"
+    #Image.fromarray(np.uint8(numba_filters.numba_color2sepia(np.array(image), sepia_weights, k=0.5))).save('pic.jpg')
+    #Image.fromarray(np.uint8(cython_filters.cython_color2sepia(np.array(image), sepia_weights, k=0.5))).save('pic2.jpg')
     print(f"Writing performance report (timed with timeit.timeit) to {writing_file}...")
     
     with open(writing_file, "w") as file:
         
-        file.write(f"Timing performed using timeit.timeit with file: {image.filename} \ndimensions(width, heigth): {image.size}\n")
+        file.write(f"Timing performed using timeit.timeit. \nCPU:{get_processor_name()} \nfile used: {image.filename} \ndimensions(width, heigth, 3) of file: {image.size}\n")
         file.write("-"*100); file.write("\n"*2)
         for color in range(len(filter_colors)):
             
@@ -81,7 +102,7 @@ def make_reports(filename: str = importer.rainloc, calls: int = 5):
                 
                 # time the reference implementation
                 reference_time = time_one(reference_filter[color], image, weights[color], calls = calls)
-                file.write(f"Reference (pure Python) filter average time ({calls=}) {filter_name}: {reference_time:.3e}s \n")
+                file.write(f"Reference (pure Python) filter average time ({calls=}) {filter_name}: {reference_time:.2e}s \n")
                 
                 # iterate through the implementations
                 implementations =  {"numpy": [numpy_filters.numpy_color2gray, numpy_filters.numpy_color2sepia],\
@@ -96,7 +117,7 @@ def make_reports(filename: str = importer.rainloc, calls: int = 5):
                     
                     # compare the reference time to the optimized time
                     speedup = reference_time/filter_time
-                    file.write(f"{implementation} {filter_name}: {filter_time:.3e}s ({speedup=:.2f}x)\n")
+                    file.write(f"{implementation} {filter_name}: {filter_time:.2e}s ({speedup=:.2f}x)\n")
             
             file.write("\n")
         print("Done.")

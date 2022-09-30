@@ -5,6 +5,7 @@ import numpy as np
 
 cimport numpy as np
 cimport cython
+#from cython.parallel import prange # import if parallelizing, having issues so not parallelized
 np.import_array()
 
 DTYPE = np.double
@@ -40,7 +41,7 @@ def cython_color2gray(const np.npy_uint8[:,:,::1] image, const double[::1] weigh
 @cython.nonecheck(False)
 @cython.boundscheck(False)
 @cython.wraparound(False)
-def cython_color2sepia(const np.npy_uint8[:,:,::1] image, const double[:,::1] weights, double k = 1) -> np.array:
+def cython_color2sepia(const np.npy_uint8[:,:,::1] image, const double[:,::1] weights, const double k = 1) -> np.array:
     """Convert rgb pixel array to sepia
 
     Args:
@@ -62,7 +63,7 @@ def cython_color2sepia(const np.npy_uint8[:,:,::1] image, const double[:,::1] we
     cdef double[:,:,::1] sepia_image = s 
 
     cdef size_t i, j, l
-    cdef double val, max
+    cdef double val, maxx
     
     for i in range(H):
         for j in range(W):
@@ -70,15 +71,16 @@ def cython_color2sepia(const np.npy_uint8[:,:,::1] image, const double[:,::1] we
                 val = weights[l][2]*image[i][j][0] + weights[l][1]*image[i][j][1] + weights[l][0]*image[i][j][2]
 
                 sepia_image[i][j][l] = image[i][j][l] * (1-k) + val * k
+    
+                if sepia_image[i][j][l] > maxx:
+                    maxx = sepia_image[i][j][l] 
                 
-                if sepia_image[i][j][l] > max:
-                    max = sepia_image[i][j][l]
+    
 
     for i in range(H):
         for j in range(W):
             for l in range(D):
-                sepia_image[i][j][l] = sepia_image[i][j][l]/max*255
-
+                sepia_image[i][j][l] = sepia_image[i][j][l]/maxx*255
 
     return sepia_image
 

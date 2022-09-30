@@ -39,7 +39,7 @@ def numba_color2sepia(image: np.array, weights: np.array, k: Optional[float] = 1
 
     sepia_image = np.empty(image.shape)
 
-    max = 0
+   
     for i in prange(image.shape[0]):
         for j in prange(image.shape[1]):
             for l in prange(image.shape[2]):
@@ -47,15 +47,17 @@ def numba_color2sepia(image: np.array, weights: np.array, k: Optional[float] = 1
                 
                 sepia_image[i][j][l] = image[i][j][l] * (1-k) + val * k
     
-    # not parallelized as it causes issues with "max"         
+    # not parallelized since it will cause issues.
+    maxx = 0  
     for i in range(image.shape[0]):
         for j in range(image.shape[1]):
-            for l in range(image.shape[2]):
-                
-                if sepia_image[i][j][l] > max:
-                    max = sepia_image[i][j][l]
+            if max(sepia_image[i][j]) > maxx:
+                    maxx = max(sepia_image[i][j])
 
-                sepia_image[i][j][l] = sepia_image[i][j][l]/max*255
+    for i in prange(image.shape[0]):
+        for j in prange(image.shape[1]):
+            for l in prange(image.shape[2]):     
+                sepia_image[i][j][l] = sepia_image[i][j][l]/maxx*255
 
 
     return sepia_image

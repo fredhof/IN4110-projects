@@ -28,7 +28,7 @@ if use_cython:
                 ("CYTHON_TRACE_NOGIL", "1"),
                 ("NPY_NO_DEPRECATED_API", "NPY_1_7_API_VERSION"),
             ],
-            extra_compile_args=['-ffast-math', '-march=native', '-O3']
+            extra_compile_args=['-ffast-math', '-march=native', '-O3'],
         )
     ]
     cython_directives = {
