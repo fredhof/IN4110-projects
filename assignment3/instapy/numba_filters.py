@@ -50,7 +50,7 @@ def numba_color2sepia(image: np.array, weights: np.array, k: Optional[float] = 1
     for i in prange(image.shape[0]):
         for j in prange(image.shape[1]):
             for l in prange(image.shape[2]):
-                val = weights[l][2]*image[i][j][0] + weights[l][1]*image[i][j][1] + weights[l][0]*image[i][j][2]
+                val = weights[l][0]*image[i][j][0] + weights[l][1]*image[i][j][1] + weights[l][2]*image[i][j][2]
                 
                 sepia_image[i][j][l] = image[i][j][l] * (1-k) + val * k
     

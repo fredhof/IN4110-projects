@@ -83,7 +83,7 @@ def cython_color2sepia(const np.npy_uint8[:,:,::1] image, const double[:,::1] we
     for i in range(H):
         for j in range(W):
             for l in range(D):
-                val = weights[l][2]*image[i][j][0] + weights[l][1]*image[i][j][1] + weights[l][0]*image[i][j][2]
+                val = weights[l][0]*image[i][j][0] + weights[l][1]*image[i][j][1] + weights[l][2]*image[i][j][2]
 
                 sepia_image[i][j][l] = image[i][j][l] * (1-k) + val * k
     

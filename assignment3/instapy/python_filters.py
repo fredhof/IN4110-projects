@@ -47,7 +47,7 @@ def python_color2sepia(image: list, weights: list, k: Optional[float] = 1) -> li
     for i in range(len(sepia_image)):
         for j in range(len(sepia_image[0])):
             for l in range(len(sepia_image[0][0])):
-                val = (weights[l][2]*image[i][j][0] + weights[l][1]*image[i][j][1] + weights[l][0]*image[i][j][2]) 
+                val = (weights[l][0]*image[i][j][0] + weights[l][1]*image[i][j][1] + weights[l][2]*image[i][j][2]) 
 
                 sepia_image[i][j][l] = image[i][j][l] * (1-k) + val * k
                 
