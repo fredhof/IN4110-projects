@@ -5,7 +5,6 @@ Can be executed as `python3 -m instapy.timing`
 
 For Task 6.
 """
-from concurrent.futures import process
 import timeit 
 import instapy
 from . import io
@@ -16,6 +15,7 @@ from PIL import Image
 
 import os, platform, subprocess, re
 
+# Finds the CPU brand of various operating systems
 def get_processor_name():
     if platform.system() == "Windows":
         return platform.processor()
@@ -84,10 +84,11 @@ def make_reports(filename: str = importer.rainloc, calls: int = 5):
     filter_colors = ["color2gray", "color2sepia"]  
     weights = [gray_weights, sepia_weights]
     writing_file = "timing-report" + ".txt"
-    #Image.fromarray(np.uint8(numba_filters.numba_color2sepia(np.array(image), sepia_weights, k=0.5))).save('pic.jpg')
-    #Image.fromarray(np.uint8(cython_filters.cython_color2sepia(np.array(image), sepia_weights, k=0.5))).save('pic2.jpg')
+    
     print(f"Writing performance report (timed with timeit.timeit) to {writing_file}...")
     
+    print(np.array(Image.open('a.jpg')))
+    ø
     with open(writing_file, "a") as file:
         file.write("-"*100); file.write("\n")
         file.write(f"Timing performed using timeit.timeit. \nCPU:{get_processor_name()} \nfile used: {image.filename} \ndimensions(width, heigth, 3) of file: {image.size}\n")
@@ -120,7 +121,7 @@ def make_reports(filename: str = importer.rainloc, calls: int = 5):
                     file.write(f"{implementation} {filter_name}: {filter_time:.2e}s ({speedup=:.2f}x)\n")
             
             file.write("\n")
-        print("Done.")
+    print("Done.")
 
 
 if __name__ == "__main__":

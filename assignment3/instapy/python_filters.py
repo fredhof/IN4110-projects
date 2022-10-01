@@ -7,14 +7,18 @@ def python_color2gray(image: list, weights: list, k: Optional[float]) -> list:
     """Convert rgb pixel array to grayscale
 
     Args:
-        image (np.array)
+        image (list): the original image array
+        weights (list): the weights of the transformation
+        k (float): amount of filter to apply (optional)
     Returns:
-        np.array: gray_image
+        list: gray_image, the transformed image
     """
     
-    # iterate through the pixels, and apply the grayscale transform
+    #initialize empty filtered array to assigne values to
+    # reduce RGB to grayscale (y,x,3) -> (y,x) as they are uniform
     gray_image = np.empty((len(image), len(image[0]))).tolist()
 
+    # iterate through the pixels, and apply the grayscale transform
     for i in range(len(gray_image)):
         for j in range(len(gray_image[0])):
             gray_image[i][j] = image[i][j][0]*weights[0] + image[i][j][1]*weights[1] + image[i][j][2]*weights[2]
@@ -26,9 +30,11 @@ def python_color2sepia(image: list, weights: list, k: Optional[float] = 1) -> li
     """Convert rgb pixel array to sepia
 
     Args:
-        image (np.array)
+        image (list): the original image array
+        weights (list): the weights of the transformation
+        k (float): amount of filter to apply (optional)
     Returns:
-        np.array: sepia_image
+        list: sepia_image, the transformed image
     """
     if not 0 <= k <= 1:
         # validate k (optional)
@@ -36,6 +42,8 @@ def python_color2sepia(image: list, weights: list, k: Optional[float] = 1) -> li
 
     sepia_image = np.empty((len(image), len(image[0]), len(image[0][0]))).tolist()
     max = 0
+
+    # iterate through the pixels, and apply the sepia transform
     for i in range(len(sepia_image)):
         for j in range(len(sepia_image[0])):
             for l in range(len(sepia_image[0][0])):
@@ -46,6 +54,7 @@ def python_color2sepia(image: list, weights: list, k: Optional[float] = 1) -> li
                 if sepia_image[i][j][l] > max:
                     max = sepia_image[i][j][l]
 
+    # new looop now that max is properly defined
     for i in range(len(sepia_image)):
         for j in range(len(sepia_image[0])):
             for l in range(len(sepia_image[0][0])):
