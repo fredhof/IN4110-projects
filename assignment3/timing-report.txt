@@ -6,14 +6,14 @@ dimensions(width, heigth, 3) of file: (600, 400)
 ----------------------------------------------------------------------------------------------------
 
 Reference (pure Python) filter average time (calls=10) color2gray: 1.02e-01s 
-numpy color2gray: 1.71e-03s (speedup=60.05x)
-cython color2gray: 6.56e-04s (speedup=156.06x)
-numba color2gray: 7.00e-04s (speedup=146.41x)
+numpy color2gray: 1.76e-03s (speedup=58.23x)
+cython color2gray: 5.82e-04s (speedup=175.62x)
+numba color2gray: 3.86e-04s (speedup=265.14x)
 
-Reference (pure Python) filter average time (calls=10) color2sepia: 8.10e-01s 
-numpy color2sepia: 1.17e-02s (speedup=69.03x)
-cython color2sepia: 4.50e-03s (speedup=180.23x)
-numba color2sepia: 4.51e-03s (speedup=179.71x)
+Reference (pure Python) filter average time (calls=10) color2sepia: 7.44e-01s 
+numpy color2sepia: 1.34e-02s (speedup=55.68x)
+cython color2sepia: 4.52e-03s (speedup=164.54x)
+numba color2sepia: 4.56e-03s (speedup=162.91x)
 
 ----------------------------------------------------------------------------------------------------
 Timing performed using timeit.timeit. 
@@ -31,3 +31,23 @@ Reference (pure Python) filter average time (calls=10) color2sepia: 3.20e-01s
 numpy color2sepia: 3.53e-03s (speedup=90.73x)
 cython color2sepia: 1.83e-03s (speedup=174.42x)
 numba color2sepia: 1.09e-03s (speedup=292.25x)
+
+
+
+----------------------------------------------------------------------------------------------------
+Timing performed using timeit.timeit. 
+CPU: Intel(R) Pentium(R) CPU 4415U @ 2.30GHz 
+file used: /home/fredrik/Documents/IN4110/IN3110-fredhof/assignment3/test/rain.jpg 
+dimensions(width, heigth, 3) of file: (600, 400)
+----------------------------------------------------------------------------------------------------
+
+Reference (pure Python) filter average time (calls=10) color2gray: 1.06e-01s 
+numpy color2gray: 1.81e-03s (speedup=58.64x)
+cython color2gray: 5.82e-04s (speedup=181.97x)
+numba color2gray: 3.89e-04s (speedup=272.65x)
+
+Reference (pure Python) filter average time (calls=10) color2sepia: 7.34e-01s 
+numpy color2sepia: 1.39e-02s (speedup=52.73x)
+cython color2sepia: 4.49e-03s (speedup=163.64x)
+numba color2sepia: 1.00e-02s (speedup=73.26x)
+

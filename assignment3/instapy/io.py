@@ -23,6 +23,7 @@ def random_image(width: int = 320, height: int = 180) -> np.array:
     return np.random.randint(0, 255, size=(height, width, 3), dtype=np.uint8)
 
 
-def display(array: np.array):
+def display(array: np.array or list) -> None:
     """Show an image array on the screen"""
+    if isinstance(array, list): array = np.array(array)
     Image.fromarray(array).show()

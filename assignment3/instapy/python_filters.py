@@ -18,9 +18,11 @@ def python_color2gray(image: list, weights: list, k: Optional[float]) -> list:
     # reduce RGB to grayscale (y,x,3) -> (y,x) as they are uniform
     gray_image = np.empty((len(image), len(image[0]))).tolist()
 
+    H = len(gray_image) # 400
+    W = len(gray_image[0]) # 600
     # iterate through the pixels, and apply the grayscale transform
-    for i in range(len(gray_image)):
-        for j in range(len(gray_image[0])):
+    for i in range(H):
+        for j in range(W):
             gray_image[i][j] = image[i][j][0]*weights[0] + image[i][j][1]*weights[1] + image[i][j][2]*weights[2]
     
     return gray_image
@@ -43,11 +45,14 @@ def python_color2sepia(image: list, weights: list, k: Optional[float] = 1) -> li
     sepia_image = np.empty((len(image), len(image[0]), len(image[0][0]))).tolist()
     max = 0
 
+    H = len(sepia_image) # 400
+    W = len(sepia_image[0]) # 600
+    D = len(sepia_image[0][0]) # 3
     # iterate through the pixels, and apply the sepia transform
-    for i in range(len(sepia_image)):
-        for j in range(len(sepia_image[0])):
-            for l in range(len(sepia_image[0][0])):
-                val = (weights[l][0]*image[i][j][0] + weights[l][1]*image[i][j][1] + weights[l][2]*image[i][j][2]) 
+    for i in range(H):
+        for j in range(W):
+            for l in range(D):
+                val = weights[l][0]*image[i][j][0] + weights[l][1]*image[i][j][1] + weights[l][2]*image[i][j][2] 
 
                 sepia_image[i][j][l] = image[i][j][l] * (1-k) + val * k
                 
@@ -55,9 +60,9 @@ def python_color2sepia(image: list, weights: list, k: Optional[float] = 1) -> li
                     max = sepia_image[i][j][l]
 
     # new looop now that max is properly defined
-    for i in range(len(sepia_image)):
-        for j in range(len(sepia_image[0])):
-            for l in range(len(sepia_image[0][0])):
+    for i in range(H):
+        for j in range(W):
+            for l in range(D):
                 sepia_image[i][j][l] = sepia_image[i][j][l]/max*255
 
 

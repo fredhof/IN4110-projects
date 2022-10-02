@@ -7,7 +7,7 @@ For Task 6.
 """
 import timeit 
 import instapy
-from . import io
+from instapy import io
 from typing import Callable
 import numpy as np
 from PIL import Image
@@ -87,8 +87,6 @@ def make_reports(filename: str = importer.rainloc, calls: int = 5):
     
     print(f"Writing performance report (timed with timeit.timeit) to {writing_file}...")
     
-    print(np.array(Image.open('a.jpg')))
-    ø
     with open(writing_file, "a") as file:
         file.write("-"*100); file.write("\n")
         file.write(f"Timing performed using timeit.timeit. \nCPU:{get_processor_name()} \nfile used: {image.filename} \ndimensions(width, heigth, 3) of file: {image.size}\n")
