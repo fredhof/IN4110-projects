@@ -11,9 +11,7 @@ version = "0.1.0"
 requires-python = ">=3.7"
 license = {text = "MIT License"}
 name = "instapy"
-description = 'instapy is an image processing modue that can transform a image using the grayscale or sepia transforms, scale/resize it, display and save to file.
-For sepia transformations it supports scaling by a constant k = [0,1], where k=0 returns the original image and k=1 returns the sepia transformed image.
-instapy supports four different implementations for the gray and sepia filters: pure Python, NumPy, Numba, Cython. It can also track the run time of the given implementation.'
+description = "instapy is an image processing modue that can transform an image to grayscale and sepia with different implementations. It also supports scaling/resizing, scaling transform, tracking runtime etc."
 readme = "README.md"
 dependencies = [
 	"numpy>=1.21.*",
