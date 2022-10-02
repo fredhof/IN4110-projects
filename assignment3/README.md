@@ -1,14 +1,15 @@
 # instapy
-instapy is an image processing modue that can transform a image using the grayscale or sepia transforms, scale/resize it, display and save to file.
-For sepia transformations it supports scaling by a constant k = [0,1], where k=0 returns the original image and k=1 returns the sepia transformed image.
+instapy is an image processing module that can transform a image using the grayscale or sepia transforms, scale/resize it, display and save to file.\
+For sepia transformations it supports scaling by a constant k = [0,1], where k=0 returns the original image and k=1 returns the sepia transformed image.\
 instapy supports four different implementations for the gray and sepia filters: pure Python, NumPy, Numba, Cython. It can also track the run time of the given implementation.
 
 ### Installation instructions
-Clone the repository, "cd" into it and install with pip as `pip install .`. The command may differ depending on your system.
+Clone the repository, "cd" into it and install with pip as `pip install .`. The command may differ depending on your system. \
+Then you have to compile the Cython file. That can be done as `python3 setup.py build_ext -i`.
 
 ### Usage
-The package can be run as `python3 -m instapy *args **kwargs`.
-Running `python3 -m instapy -h` will display the instruction manual.
+The package can be run as `python3 -m instapy *args **kwargs`.\
+Running `python3 -m instapy -h` will display the instruction manual.\
 ```
 positional arguments:
   file                  The filename to apply filter to
