@@ -30,12 +30,12 @@ def time_plan(url: str) -> str:
         markdown (str) : string containing the markdown schedule
     """
     # Get the page
-    html = ...
+    html = get_html(url)
     # parse the HTML
-    soup = ...
+    soup = BeautifulSoup(html, 'html.parser')
     # locate the table
-    calendar = ...
-    soup_table = ...
+    calendar = soup.find(id="Calendar")
+    soup_table = calendar.find_next("table", {"class": "wikitable"})
     # extract events into pandas data frame
     df = extract_events(soup_table)
 
@@ -68,16 +68,16 @@ def extract_events(table: bs4.element.Tag) -> pd.DataFrame:
     data = []
 
     # Extracts the data in table, keeping track of colspan and rowspan
-    rows = ...
+    rows = table.find_all('tr')
     rows = rows[1:]
     for tr in rows:
-        cells = ...
+        cells = tr.find_all('td')
+        print(cells)
         row = []
         for cell in cells:
-            colspan = ...
-            rowspan = ...
-            ...
-            text = ...
+            colspan = len(cell)
+            rowspan = len(tr)
+            text = [strip_text(tr.text) for tr in cells]
             row.append(
                 TableEntry(
                     text=text,
@@ -86,17 +86,18 @@ def extract_events(table: bs4.element.Tag) -> pd.DataFrame:
                 )
             )
         data.append(row)
+    print(data)
     # at this point `data` should be a table (list of lists)
     # where each item is a TableEntry with row/colspan properties
     # expand TableEntries into a dense table
     all_data = expand_row_col_span(data)
 
     # List of desired columns
-    wanted = ...
+    wanted = ['Date', 'Venue', 'Type']
 
     # Filter data and create pandas dataframe
     filtered_data = filter_data(labels, all_data, wanted)
-    df = ...
+    df = pd.DataFrame(filter_data)
 
     return df
 
@@ -116,8 +117,8 @@ def render_schedule(data: pd.DataFrame) -> str:
         Useful with pandas Series.apply
         """
         return event_types.get(type_key[:2], type_key)
-
-    ...
+    data = data.Series.apply(expand_event_type(event_types))
+    return data.to_markdown()
 
 
 def strip_text(text: str) -> str:

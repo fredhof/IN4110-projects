@@ -1,3 +1,5 @@
+from email.mime import base
+import math
 import re
 from urllib.parse import urljoin
 from requesting_urls import get_html
@@ -17,47 +19,62 @@ def find_urls(
         urls (set) : set with all the urls found in html text
     """
     # create and compile regular expression(s)
-    html = get_html(html)
+    
+    a_pat = re.compile(r"<a[^>]+>", flags=re.IGNORECASE)
+   
+    # src finds the text between quotes of the `src` attribute
+    href_pat = re.compile(r'href="([^"]+)"', flags=re.IGNORECASE)
+    url_set = set()
+    # first, find all the img tags
+    for a_tag in a_pat.findall(html):
+        # then, find the src attribute of the img, if any
+        match = href_pat.search(a_tag)
+        if match:
+            if match[1].startswith('//'):
+                url_set.add("https:" + match.group(1))
+            
+            elif "#" in match[1]:
+                if not match[1].startswith('#'):
+                    url_set.add(base_url + match[1].split("#")[0])
+                
+            elif match[1].startswith('/'):
+                url_set.add(base_url + match.group(1))
+            
+            else: url_set.add(match.group(1))
 
-    regex_url = re.compile(r"""
-        <a.*?href="     # match <a and start to read from the " following href=
-        ((?:/[^/:]+?)+) # match relative urls on the form /relative/url
-        (?:\#.*?)?"     # read past without keeping anything following #
-        .*?</a>         # match the end of the block""", re.VERBOSE)
-
-
-    # Absolute and relative URLs
-    urls = regex_url.findall(html)
-    print(urls)
-    # 1. find all the anchor tags, then
-    # 2. find the urls href attributes
-
-    # Write to file if requested
     if output:
-        print(f"Writing to: {output}")
-        with open(output, "a") as file:
-            file.write(f"url: {base_url}\nwebsites found in url: {urls}")
+        with open(output, 'w', encoding='utf8') as file:
+            [file.write(match + '\n') for match in url_set]
+    
+    
+    
+    return url_set
 
-    return urls
-
-print(find_urls("https://en.wikipedia.org/wiki/horse"))
 
 
-def find_articles(html: str, output=None) -> set:
+
+def find_articles(html: str, output:str = None) -> set:
     """Finds all the wiki articles inside a html text. Make call to find urls, and filter
     arguments:
         - text (str) : the html text to parse
     returns:
         - (set) : a set with urls to all the articles found
     """
-    urls = ...
-    pattern = ...
-    articles = ...
+    urls = find_urls(html)
+    pattern = re.compile(r"wikipedia.org/wiki")
+    articles = set()
+    for url in urls:
+        match = pattern.search(url)
+        # the second removes links such as  "https://en.wikipedia.orghttps://en.wikipedia.org/wiki/Nobel_Prize_controversies"
+        if match and url.count("wikipedia") < 2: articles.add(url)
+    
 
     # Write to file if wanted
     if output:
-        ...
-    ...
+        with open(output, 'w', encoding='utf8') as file:
+            [file.write(match + '\n') for match in articles]
+
+    return articles
 
 
 ## Regex example

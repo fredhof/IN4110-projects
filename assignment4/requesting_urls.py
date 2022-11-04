@@ -25,11 +25,8 @@ def get_html(url: str, params: Optional[Dict] = None, output: Optional[str] = No
     html_str = response.text
 
     if output:
-        # if output is specified, the response txt and url get printed to a
-        # txt file with the name in `output`
-        print(f"Writing to: {output}")
-        with open(output, "a") as file:
-            file.write(f"url: {response.url}\nrequests.get.text: {html_str}")
-
+        with open(output, 'w', encoding='utf8') as file:
+            file.write(html_str)
 
     return html_str
+
