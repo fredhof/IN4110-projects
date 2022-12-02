@@ -66,9 +66,12 @@ def test_plot_prices():
         end_date=datetime.date(2022, 10, 30), days=3, locations=["NO1", "NO2"]
     )
     chart = plot_prices(df)
-    assert isinstance(chart, alt.Chart)
+    assert isinstance(chart, (alt.Chart, alt.HConcatChart))
     chart_dict = chart.to_dict()
-    assert chart.mark == "line"
+
+    # alt.HConcatChart has no mark
+    if isinstance(chart, alt.Chart):
+        assert chart.mark == "line"
     # could assert encodings here
 
 

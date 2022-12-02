@@ -1,11 +1,12 @@
 import datetime
 from typing import List, Optional
+import os
 
 import uvicorn
 import altair as alt
 from fastapi import FastAPI, Query, Request
 from fastapi.templating import Jinja2Templates
-from starlette.staticfiles import StaticFiles
+from fastapi.staticfiles import StaticFiles
 from strompris import (
     ACTIVITIES,
     LOCATION_CODES,
@@ -17,7 +18,9 @@ from strompris import (
 )
 
 app = FastAPI()
-templates = Jinja2Templates(directory="templates/")
+
+template_dir = os.path.join(os.path.abspath(os.path.dirname(__file__)),'templates')
+templates = Jinja2Templates(directory=template_dir)
 
 
 # `GET /` should render the `strompris.html` template
@@ -27,8 +30,8 @@ templates = Jinja2Templates(directory="templates/")
 # - today: current date
 
 @app.get("/")
-async def root(req: Request, location_codes: dict, today: datetime.date = datetime.date.today()):
-    return templates.TemplateResponse("strompris.html", {"request":req, "location_codes":location_codes, "today":today})
+async def root(req: Request):
+    return templates.TemplateResponse("strompris.html", {"request":req, "location_codes":LOCATION_CODES, "today":datetime.date.today()})
 
 
 # GET /plot_prices.json should take inputs:
@@ -41,9 +44,13 @@ async def root(req: Request, location_codes: dict, today: datetime.date = dateti
 # (task 5.6: return chart stacked with plot_daily_prices)
 
 @app.get("/plot_prices.json")
-async def plt_prices(locations: dict = LOCATION_CODES, end: datetime.date = datetime.date.today(), days: int = 7) -> alt.Chart.to_dict:
+async def plt_prices(locations: list  = Query(list(LOCATION_CODES.keys())), end: datetime.date = datetime.date.today(), days: int = 7) -> alt.Chart.to_dict:
     df = fetch_prices(end, days, locations)
-    return plot_prices(df).to_dict()
+    prices = plot_prices(df)
+    avg_prices = plot_daily_prices(df)
+    # uncomment to test that pytest passes all tests.
+    #return (avg_prices).to_dict() # PASSES. prices is HConcatChart so it will fail. So will the below line!
+    return (avg_prices | prices).to_dict()
 
 
 
@@ -70,8 +77,9 @@ async def plt_prices(locations: dict = LOCATION_CODES, end: datetime.date = date
 
 
 # mount your docs directory as static files at `/help`
-
-app.mount("/static", StaticFiles(directory="static"), name="static")
+help_dir = os.path.join(os.path.abspath(os.path.dirname(__file__)),'docs', '_build', 'html')
+print(help_dir)
+app.mount("/help", StaticFiles(directory=help_dir, html=True), name='index.html')
 
 if __name__ == "__main__":
     # use uvicorn to launch your application on port 5000

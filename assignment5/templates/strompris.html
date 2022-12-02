@@ -34,6 +34,9 @@
         background-color: #193498;
         color: white;
       }
+
+     
+    
     </style>
     <script
       type="text/javascript"
@@ -48,16 +51,54 @@
       src="https://cdn.jsdelivr.net/npm//vega-embed@6"
     ></script>
   </head>
+  
   <body>
-    <!-- Add Navigation Bar to Docs.
-    -->
-
+    <!-- Add Navigation Bar to Docs.  -->
+    <div class="topnav">
+      <a class="active" href="/">Home</a>
+      <a href="/docs">FastAPI Docs</a>
+      <a href="/help">Help</a>
+    </div>
+    
+    <div style="text-align: center"> 
+      <h1> My strømpris API</h1>
+      <div style="display: inline-block; text-align: left;">
     <div id="vis"></div>
+    
     <!-- Create Form -->
-    <form action="javascript:refreshPlot()" id="price-form">
-      <!--
-      -->
-    </form>
+    <form action="javascript:refreshPlot()" id="price-form" margin="auto">
+      
+      <p><input type="checkbox" name="locations" value="NO5" checked>
+        <label for="price-form">Bergen</label></p>
+      
+      <p><input type="checkbox" name="locations" value="NO2" checked>
+        <label for="price-form">Kristiansand</label></p>
+      
+      <p><input type="checkbox" name="locations" value="NO1" checked>
+        <label for="price-form">Oslo</label></p>
+
+      <p><input type="checkbox" name="locations" value="NO4" checked>
+        <label for="price-form">Tromsø</label></p>
+
+      <p><input type="checkbox" name="locations" value="NO3" checked>
+        <label for="price-form">Trondheim</label></p>
+
+     
+
+      
+
+      <input id="end" type="date" name="end" min="2022-10-02" max="2022-12-31">
+        <script>
+          document.getElementById('end').value = new Date().toISOString().substring(0, 10);
+          document.getElementById('end').max = new Date().toISOString().substring(0, 10);
+        </script> 
+      
+      <input id="days" type="number"  name="days" value=7> 
+      <button id="refresh" type="submit">Refresh</button>
+      </form>
+      <p>Data from https://www.hvakosterstrommen.no/strompris-api</p>
+    </div>
+  </div> 
 
     <script type="text/javascript">
       async function refreshPlot() {
